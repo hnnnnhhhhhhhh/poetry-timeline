@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>诗路五千年</title>
+<style>
+/* SECTION: reset & variables */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0e14;--bg2:#131620;--card:#1a1d2e;
+  --gold:#d4a853;--gold-light:#f0d89a;--gold-dim:rgba(212,168,83,0.15);
+  --ink:#e8dcc8;--ink2:#a89b85;--ink3:#6b6155;
+  --accent:#c0392b;--accent2:#e74c3c;
+  --blue:#4a90a4;--green:#5a8a6a;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,0.4);
+  --font:'PingFang SC','Noto Serif SC','Microsoft YaHei','Songti SC',serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.7;overflow-x:hidden}
+a{color:var(--gold);text-decoration:none}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:var(--ink3);border-radius:3px}
+
+/* SECTION: hero */
+.hero{
+  position:relative;height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(212,168,83,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(192,57,43,0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #0c0e14 0%, #1a1520 50%, #0c0e14 100%);
+}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.hero-particle{
+  position:absolute;border-radius:50%;background:var(--gold);opacity:0.15;
+  animation:float 8s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-30px) scale(1.1)}
+}
+.hero-content{position:relative;z-index:2;max-width:700px;padding:0 20px}
+.hero-badge{
+  display:inline-block;padding:6px 20px;border:1px solid var(--gold-dim);
+  border-radius:20px;font-size:12px;color:var(--gold);letter-spacing:4px;
+  margin-bottom:24px;backdrop-filter:blur(10px);
+  background:rgba(212,168,83,0.05);
+}
+.hero-title{
+  font-size:clamp(42px,8vw,80px);font-weight:900;
+  background:linear-gradient(135deg,#f0d89a 0%,#d4a853 40%,#c0392b 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:6px;line-height:1.2;margin-bottom:16px;
+}
+.hero-sub{font-size:clamp(14px,2.5vw,18px);color:var(--ink2);letter-spacing:2px;margin-bottom:40px}
+.hero-search{
+  display:flex;max-width:480px;width:100%;margin:0 auto;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:30px;overflow:hidden;backdrop-filter:blur(10px);
+  transition:border-color 0.3s;
+}
+.hero-search:focus-within{border-color:var(--gold)}
+.hero-search input{
+  flex:1;padding:14px 24px;background:none;border:none;outline:none;
+  color:var(--ink);font-size:15px;font-family:var(--font);
+}
+.hero-search input::placeholder{color:var(--ink3)}
+.hero-search button{
+  padding:14px 28px;background:linear-gradient(135deg,var(--gold),#b8923e);
+  border:none;color:#fff;font-weight:600;cursor:pointer;font-size:14px;
+  transition:opacity 0.2s;
+}
+.hero-search button:hover{opacity:0.9}
+.hero-scroll{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  color:var(--ink3);font-size:12px;letter-spacing:2px;
+  animation:bob 2s ease-in-out infinite;cursor:pointer;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* SECTION: search results overlay */
+.search-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  align-items:flex-start;justify-content:center;padding-top:120px;
+}
+.search-overlay.show{display:flex}
+.search-results{
+  background:var(--card);border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--radius);max-width:520px;width:90%;max-height:60vh;
+  overflow-y:auto;padding:8px;
+}
+.search-result-item{
+  padding:14px 18px;border-radius:10px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;transition:background 0.2s;
+}
+.search-result-item:hover{background:var(--gold-dim)}
+.search-result-item .sr-emoji{font-size:24px}
+.search-result-item .sr-name{font-weight:600}
+.search-result-item .sr-meta{font-size:12px;color:var(--ink2)}
+.search-close{
+  position:fixed;top:30px;right:30px;width:40px;height:40px;
+  border-radius:50%;border:1px solid rgba(255,255,255,0.2);
+  background:rgba(0,0,0,0.5);color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* SECTION: timeline */
+.timeline-section{
+  position:relative;padding:80px 0 120px;
+  min-height:100vh;
+}
+.timeline-section-title{
+  text-align:center;font-size:clamp(24px,4vw,36px);font-weight:800;
+  color:var(--gold-light);letter-spacing:4px;margin-bottom:60px;
+}
+.timeline-container{
+  position:relative;max-width:1100px;margin:0 auto;padding:0 20px;
+}
+/* center axis line */
+.timeline-axis{
+  position:absolute;left:50%;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent,var(--gold) 5%,var(--gold) 95%,transparent);
+  transform:translateX(-50%);
+}
+/* dynasty grid lines every ~200 years */
+.dynasty-line{
+  position:absolute;left:0;right:0;height:1px;
+  background:rgba(212,168,83,0.12);
+  transition:background 0.3s;
+}
+.dynasty-line.highlight{background:rgba(212,168,83,0.5)}
+.dynasty-label{
+  position:absolute;left:50%;transform:translateX(-50%);
+  padding:8px 24px;background:var(--bg);border:1px solid var(--gold-dim);
+  border-radius:20px;font-size:13px;font-weight:700;color:var(--gold);
+  letter-spacing:3px;white-space:nowrap;z-index:5;
+  cursor:pointer;transition:all 0.3s;
+}
+.dynasty-label:hover,.dynasty-label.highlight{
+  background:var(--gold);color:var(--bg);border-color:var(--gold);
+  box-shadow:0 0 20px rgba(212,168,83,0.3);
+}
+.dynasty-years{
+  display:block;font-size:10px;font-weight:400;color:var(--ink3);
+  letter-spacing:1px;margin-top:2px;
+}
+.dynasty-label:hover .dynasty-years,.dynasty-label.highlight .dynasty-years{color:var(--bg)}
+
+/* SECTION: poet cards */
+.poet-card{
+  position:absolute;width:280px;
+  background:var(--card);border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius);padding:20px;
+  box-shadow:var(--shadow);cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:3;
+}
+.poet-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.5),0 0 0 1px var(--gold-dim);
+  border-color:var(--gold-dim);
+}
+.poet-card.highlight{
+  border-color:var(--gold);
+  box-shadow:0 8px 32px rgba(212,168,83,0.2),0 0 0 1px var(--gold);
+  transform:translateY(-4px);
+}
+.poet-card.left{right:calc(50% + 40px);text-align:right}
+.poet-card.right{left:calc(50% + 40px);text-align:left}
+/* connector line from card to axis */
+.poet-card.left::after{
+  content:'';position:absolute;right:-40px;top:50%;
+  width:40px;height:1px;background:rgba(212,168,83,0.3);
+}
+.poet-card.right::after{
+  content:'';position:absolute;left:-40px;top:50%;
+  width:40px;height:1px;background:rgba(212,168,83,0.3);
+}
+/* dot on axis */
+.poet-dot{
+  position:absolute;left:50%;width:12px;height:12px;
+  background:var(--gold);border:2px solid var(--bg);
+  border-radius:50%;transform:translate(-50%,-50%);z-index:4;
+  transition:all 0.3s;
+}
+.poet-dot.highlight{
+  width:16px;height:16px;
+  box-shadow:0 0 12px rgba(212,168,83,0.6);
+}
+.pc-name{font-size:18px;font-weight:700;color:var(--gold-light);margin-bottom:4px}
+.pc-years{font-size:11px;color:var(--ink3);margin-bottom:8px}
+.pc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.poet-card.left .pc-tags{justify-content:flex-end}
+.pc-tag{
+  padding:2px 10px;border-radius:10px;font-size:11px;
+  border:1px solid rgba(255,255,255,0.1);color:var(--ink2);
+}
+.pc-tag.school{border-color:rgba(192,57,43,0.3);color:#e88}
+.pc-works{font-size:12px;color:var(--ink2);line-height:1.6}
+.pc-works span{
+  display:inline-block;padding:2px 8px;margin:2px;
+  background:rgba(255,255,255,0.04);border-radius:6px;
+  cursor:pointer;transition:all 0.2s;
+}
+.pc-works span:hover{background:var(--gold-dim);color:var(--gold)}
+
+/* SECTION: poet detail view */
+.view{display:none;min-height:100vh}
+.view.active{display:block;animation:fadeUp 0.4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-view{padding:0 0 80px}
+.detail-hero{
+  position:relative;padding:60px 20px 40px;text-align:center;
+  background:linear-gradient(180deg,rgba(212,168,83,0.08) 0%,transparent 100%);
+}
+.detail-back{
+  position:absolute;top:20px;left:20px;padding:8px 18px;
+  border-radius:20px;border:1px solid rgba(255,255,255,0.1);
+  background:rgba(0,0,0,0.3);color:var(--ink2);cursor:pointer;
+  font-size:13px;transition:all 0.2s;backdrop-filter:blur(10px);
+}
+.detail-back:hover{border-color:var(--gold);color:var(--gold)}
+.detail-name{font-size:clamp(28px,5vw,42px);font-weight:900;color:var(--gold-light);margin-bottom:4px}
+.detail-years{font-size:14px;color:var(--ink3);margin-bottom:16px}
+.detail-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.detail-tag{
+  padding:4px 16px;border-radius:20px;font-size:12px;
+  border:1px solid rgba(255,255,255,0.1);color:var(--ink2);
+}
+.detail-tag.dynasty{border-color:var(--gold-dim);color:var(--gold)}
+.detail-tag.school{border-color:rgba(192,57,43,0.3);color:#e88}
+
+.detail-content{max-width:800px;margin:0 auto;padding:0 20px}
+.detail-section{margin-bottom:40px}
+.detail-section h3{
+  font-size:18px;color:var(--gold);margin-bottom:16px;
+  padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.detail-bio{font-size:15px;line-height:2;color:var(--ink)}
+/* life trajectory */
+.trajectory{display:flex;flex-direction:column;gap:16px;padding-left:20px;border-left:2px solid var(--gold-dim)}
+.trajectory-item{
+  position:relative;padding:12px 16px;
+  background:rgba(255,255,255,0.03);border-radius:10px;
+}
+.trajectory-item::before{
+  content:'';position:absolute;left:-25px;top:18px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--gold);border:2px solid var(--bg);
+}
+.traj-year{font-size:12px;color:var(--gold);font-weight:600;margin-bottom:4px}
+.traj-text{font-size:14px;color:var(--ink2)}
+
+/* poem list */
+.poem-list{display:flex;flex-direction:column;gap:12px}
+.poem-card{
+  padding:20px;background:var(--card);border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius);cursor:pointer;transition:all 0.3s;
+}
+.poem-card:hover{border-color:var(--gold-dim);transform:translateX(4px)}
+.poem-card .poem-title{font-size:16px;font-weight:700;color:var(--gold-light);margin-bottom:6px}
+.poem-card .poem-preview{font-size:13px;color:var(--ink2);line-height:1.8}
+.poem-card .poem-actions{margin-top:10px;display:flex;gap:8px}
+.poem-action-btn{
+  padding:4px 14px;border-radius:16px;font-size:11px;
+  border:1px solid rgba(255,255,255,0.1);background:none;
+  color:var(--ink2);cursor:pointer;transition:all 0.2s;
+}
+.poem-action-btn:hover{border-color:var(--gold);color:var(--gold)}
+.poem-action-btn.added{border-color:var(--green);color:var(--green)}
+
+/* SECTION: poem learning view */
+.learn-view{padding:0 0 80px}
+.learn-hero{
+  position:relative;padding:50px 20px 30px;text-align:center;
+  background:linear-gradient(180deg,rgba(192,57,43,0.06) 0%,transparent 100%);
+}
+.learn-title{font-size:clamp(24px,4vw,36px);font-weight:900;color:var(--gold-light);margin-bottom:4px}
+.learn-poet{font-size:14px;color:var(--ink3)}
+.learn-content{max-width:720px;margin:0 auto;padding:0 20px}
+.learn-poem-text{
+  background:var(--card);border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius);padding:32px;text-align:center;
+  margin-bottom:24px;
+}
+.learn-poem-text p{
+  font-size:clamp(18px,3vw,24px);line-height:2.2;color:var(--ink);
+  font-weight:500;letter-spacing:2px;
+}
+.learn-section{margin-bottom:32px}
+.learn-section h4{
+  font-size:15px;color:var(--gold);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.learn-text{font-size:14px;line-height:2;color:var(--ink2)}
+.learn-text dt{color:var(--gold-light);font-weight:600;margin-top:10px}
+.learn-text dd{margin-left:0;margin-bottom:4px}
+.learn-toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;
+}
+.toolbar-btn{
+  padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;
+  border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);
+  color:var(--ink);cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.toolbar-btn:hover{border-color:var(--gold);color:var(--gold)}
+.toolbar-btn.primary{background:linear-gradient(135deg,var(--gold),#b8923e);border:none;color:#fff}
+.toolbar-btn.primary:hover{opacity:0.9}
+.toolbar-btn.added{border-color:var(--green);color:var(--green)}
+
+/* SECTION: study list floating button */
+.study-list-btn{
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#b8923e);
+  border:none;color:#fff;font-size:20px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(212,168,83,0.4);
+  transition:transform 0.2s;display:flex;align-items:center;justify-content:center;
+}
+.study-list-btn:hover{transform:scale(1.1)}
+.study-list-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--accent2);color:#fff;font-size:10px;font-weight:700;
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* SECTION: study list panel */
+.study-panel{
+  display:none;position:fixed;right:0;top:0;bottom:0;width:360px;
+  background:var(--bg2);border-left:1px solid rgba(255,255,255,0.08);
+  z-index:200;padding:24px;overflow-y:auto;
+  animation:slideRight 0.3s ease;
+}
+.study-panel.show{display:block}
+@keyframes slideRight{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.study-panel-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;
+}
+.study-panel h3{font-size:18px;color:var(--gold-light)}
+.study-panel-close{
+  background:none;border:none;color:var(--ink3);font-size:20px;cursor:pointer;
+}
+.study-item{
+  padding:14px;background:var(--card);border-radius:10px;
+  margin-bottom:8px;cursor:pointer;transition:all 0.2s;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.study-item:hover{border-color:var(--gold-dim);background:rgba(212,168,83,0.05)}
+.study-item-info .si-title{font-weight:600;font-size:14px;color:var(--ink)}
+.study-item-info .si-poet{font-size:11px;color:var(--ink3)}
+.study-item-remove{
+  background:none;border:none;color:var(--ink3);cursor:pointer;font-size:14px;
+  transition:color 0.2s;
+}
+.study-item-remove:hover{color:var(--accent2)}
+
+/* SECTION: responsive */
+@media(max-width:768px){
+  .poet-card{width:220px;padding:14px}
+  .poet-card.left{right:calc(50% + 24px)}
+  .poet-card.right{left:calc(50% + 24px)}
+  .poet-card.left::after,.poet-card.right::after{display:none}
+  .study-panel{width:100%}
+  .hero-title{letter-spacing:3px}
+}
+@media(max-width:480px){
+  .poet-card{width:140px;padding:10px;font-size:12px}
+  .pc-name{font-size:14px}
+  .pc-works{font-size:11px}
+  .poet-card.left{right:calc(50% + 16px)}
+  .poet-card.right{left:calc(50% + 16px)}
+}
+</style>
+</head>
+<body>
+
+<!-- SECTION: main-view -->
+<div id="mainView" class="view active">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-content">
+      <div class="hero-badge">中华诗词 · 跨越千年的对话</div>
+      <h1 class="hero-title">诗路五千年</h1>
+      <p class="hero-sub">从先秦到清末，穿越时空与伟大诗人相遇</p>
+      <div class="hero-search">
+        <input type="text" id="searchInput" placeholder="搜索诗人、诗作、朝代…" oninput="onSearch(this.value)" onfocus="onSearch(this.value)">
+        <button onclick="onSearch(document.getElementById('searchInput').value)">搜索</button>
+      </div>
+    </div>
+    <div class="hero-scroll" onclick="document.getElementById('timelineSection').scrollIntoView({behavior:'smooth'})">↓ 向下探索</div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">✕</button>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-section" id="timelineSection">
+    <div class="timeline-section-title">— 诗 路 长 卷 —</div>
+    <div class="timeline-container" id="timelineContainer">
+      <div class="timeline-axis"></div>
+      <!-- JS renders dynasty labels, grid lines, poet cards, dots -->
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: poet-detail-view -->
+<div id="detailView" class="view">
+  <div class="detail-view">
+    <div class="detail-hero">
+      <button class="detail-back" onclick="goBack()">← 返回时间轴</button>
+      <div class="detail-name" id="detailName"></div>
+      <div class="detail-years" id="detailYears"></div>
+      <div class="detail-tags" id="detailTags"></div>
+    </div>
+    <div class="detail-content">
+      <div class="detail-section">
+        <h3>📜 生平简介</h3>
+        <div class="detail-bio" id="detailBio"></div>
+      </div>
+      <div class="detail-section">
+        <h3>🗺️ 人生轨迹</h3>
+        <div class="trajectory" id="detailTrajectory"></div>
+      </div>
+      <div class="detail-section">
+        <h3>📖 代表诗作</h3>
+        <div class="poem-list" id="detailPoems"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: poem-learning-view -->
+<div id="learnView" class="view">
+  <div class="learn-view">
+    <div class="learn-hero">
+      <button class="detail-back" onclick="goBackToPoet()">← 返回诗人</button>
+      <div class="learn-title" id="learnTitle"></div>
+      <div class="learn-poet" id="learnPoet"></div>
+    </div>
+    <div class="learn-content">
+      <div class="learn-toolbar">
+        <button class="toolbar-btn primary" onclick="readPoem()">🔊 朗读</button>
+        <button class="toolbar-btn" id="addStudyBtn" onclick="toggleStudy()">📚 加入学习清单</button>
+      </div>
+      <div class="learn-poem-text" id="learnPoemText"></div>
+      <div class="learn-section">
+        <h4>📝 释义与赏析</h4>
+        <dl class="learn-text" id="learnNotes"></dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: study list -->
+<button class="study-list-btn" onclick="toggleStudyPanel()" title="学习清单">
+  📚<span class="study-list-badge" id="studyBadge">0</span>
+</button>
+<div class="study-panel" id="studyPanel">
+  <div class="study-panel-header">
+    <h3>📚 我的学习清单</h3>
+    <button class="study-panel-close" onclick="toggleStudyPanel()">✕</button>
+  </div>
+  <div id="studyListContent"></div>
+</div>
+
+<script>
+/* ============================================================
+   DATA: Dynasties
+   ============================================================ */
+const DYNASTIES = [
+  { id:'preqin', name:'先秦', start:-1000, end:-221, color:'#8B7355' },
+  { id:'han', name:'汉', start:-206, end:220, color:'#B8860B' },
+  { id:'weijin', name:'魏晋南北朝', start:220, end:589, color:'#6B8E6B' },
+  { id:'sui', name:'隋', start:581, end:618, color:'#8B6914' },
+  { id:'tang', name:'唐', start:618, end:907, color:'#C0392B' },
+  { id:'wudai', name:'五代', start:907, end:960, color:'#7B68AE' },
+  { id:'song', name:'宋', start:960, end:1279, color:'#4A90A4' },
+  { id:'yuan', name:'元', start:1271, end:1368, color:'#5A8A6A' },
+  { id:'ming', name:'明', start:1368, end:1644, color:'#D4A853' },
+  { id:'qing', name:'清', start:1644, end:1912, color:'#8E6B4A' },
+];
+
+/* ============================================================
+   DATA: Poets (comprehensive)
+   ============================================================ */
+const POETS = [
+  {
+    id:'quyuan', name:'屈原', years:'约前340—前278', dynasty:'preqin',
+    birth:-340, zi:'字原，名平', school:'楚辞',
+    works:[
+      {title:'离骚',text:'帝高阳之苗裔兮，朕皇考曰伯庸。\n摄提贞于孟陬兮，惟庚寅吾以降。\n皇览揆余初度兮，肇锡余以嘉名。\n名余曰正则兮，字余曰灵均。',
+       notes:{释义:'我是古帝高阳氏的子孙，我已故的父亲叫伯庸。岁星在寅那年的孟春月，在庚寅那天我降生。父亲仔细揣测我的生辰，于是赐给我相应的美名。给我起名正则，给我取字灵均。',赏析:'《离骚》是中国古代最长的抒情诗，全诗373句，2490字。诗人以自叙身世、理想追求为主线，运用大量神话传说和香草美人的比喻，展现了强烈的爱国情怀和高洁品格。'}},
+      {title:'九歌·湘夫人',text:'帝子降兮北渚，目眇眇兮愁予。\n袅袅兮秋风，洞庭波兮木叶下。',
+       notes:{释义:'湘夫人降临在北洲之上，极目远眺啊使我惆怅。秋风袅袅啊天气初凉，洞庭起波啊落叶飘扬。',赏析:'以秋景起兴，"袅袅兮秋风，洞庭波兮木叶下"成为千古名句，写出了秋意的凄美与思念的深沉。'}}
+    ],
+    bio:'屈原（约前340年—前278年），芈姓，屈氏，名平，字原。中国历史上第一位伟大的爱国诗人，浪漫主义文学的奠基人。他创立了"楚辞"文体，被誉为"中华诗祖"。',
+    trajectory:[
+      {year:'约前340年',text:'出生于楚国丹阳（今湖北秭归）'},
+      {year:'前313年',text:'任左徒，主张联齐抗秦'},
+      {year:'前305年',text:'被谗言所害，遭楚怀王疏远'},
+      {year:'前278年',text:'秦将白起攻破郢都，屈原投汨罗江殉国'},
+    ]
+  },
+  {
+    id:'caocao', name:'曹操', years:'155—220', dynasty:'han',
+    birth:155, zi:'字孟德', school:'建安文学',
+    works:[
+      {title:'短歌行',text:'对酒当歌，人生几何！\n譬如朝露，去日苦多。\n慨当以慷，忧思难忘。\n何以解忧？唯有杜康。',
+       notes:{释义:'面对美酒应该高歌，人生短促能有多少！好比晨露转瞬即逝，失去的时日实在太多。席上歌声激昂慷慨，忧郁长久填满心窝。靠什么来排解忧闷？唯有狂饮方可解脱。',赏析:'此诗是曹操的代表作，表达了求贤若渴的心情和统一天下的雄心壮志。"对酒当歌，人生几何"成为感叹人生短暂的千古名句。'}},
+      {title:'观沧海',text:'东临碣石，以观沧海。\n水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。\n秋风萧瑟，洪波涌起。',
+       notes:{释义:'东行登上碣石山，来观赏那苍茫的海。海水多么宽阔浩荡，山岛高高地耸立在海边。树木和百草一丛一丛的，十分繁茂。秋风吹动树木发出悲凉的声音，海中翻腾着巨大的波浪。',赏析:'这是中国现存第一首完整的山水诗，气势磅礴，意境开阔，展现了曹操的胸襟与抱负。'}}
+    ],
+    bio:'曹操（155年—220年），字孟德，沛国谯县人。东汉末年杰出的政治家、军事家、文学家。他是建安文学的代表人物，与其子曹丕、曹植合称"三曹"。',
+    trajectory:[
+      {year:'155年',text:'出生于沛国谯县（今安徽亳州）'},
+      {year:'190年',text:'讨伐董卓，开始崛起'},
+      {year:'200年',text:'官渡之战大败袁绍'},
+      {year:'208年',text:'赤壁之战败于孙刘联军'},
+      {year:'220年',text:'病逝于洛阳'},
+    ]
+  },
+  {
+    id:'taoyuanming', name:'陶渊明', years:'365—427', dynasty:'weijin',
+    birth:365, zi:'字元亮，号五柳先生', school:'田园诗派',
+    works:[
+      {title:'饮酒·其五',text:'结庐在人境，而无车马喧。\n问君何能尔？心远地自偏。\n采菊东篱下，悠然见南山。\n山气日夕佳，飞鸟相与还。',
+       notes:{释义:'居住在人世间，却没有车马的喧嚣。问我为何能如此？只要心志高远，自然就会觉得所处地方僻静了。在东篱之下采摘菊花，悠然间那远处的南山映入眼帘。山中的气息与傍晚的景色十分好，有飞鸟结伴返回。',赏析:'"采菊东篱下，悠然见南山"是千古名句，展现了一种超然物外、与自然合一的境界，成为田园诗的典范。'}},
+      {title:'归园田居·其一',text:'少无适俗韵，性本爱丘山。\n误落尘网中，一去三十年。\n羁鸟恋旧林，池鱼思故渊。\n开荒南野际，守拙归园田。',
+       notes:{释义:'年轻时就没有适应世俗的性格，天性原本热爱山林。误入了仕途的罗网中，一去就很多年。笼中鸟依恋旧日的树林，池中鱼思念从前的深渊。到南边的原野里去开荒，依着愚拙的心性回家耕种田园。',赏析:'表达了诗人对官场生活的厌倦和对田园生活的热爱，"羁鸟恋旧林，池鱼思故渊"以生动的比喻道出归隐之志。'}}
+    ],
+    bio:'陶渊明（365年—427年），字元亮，又名潜，私谥"靖节"，世称靖节先生。浔阳柴桑人。东晋末至南朝宋初期伟大的诗人、辞赋家，是中国第一位田园诗人。',
+    trajectory:[
+      {year:'365年',text:'出生于浔阳柴桑（今江西九江）'},
+      {year:'393年',text:'初次出仕，任江州祭酒'},
+      {year:'405年',text:'任彭泽令，在任八十馀日即辞官归隐'},
+      {year:'427年',text:'病逝于家中，友人私谥"靖节先生"'},
+    ]
+  },
+  {
+    id:'wangwei', name:'王维', years:'701—761', dynasty:'tang',
+    birth:701, zi:'字摩诘，号摩诘居士', school:'山水田园派',
+    works:[
+      {title:'山居秋暝',text:'空山新雨后，天气晚来秋。\n明月松间照，清泉石上流。\n竹喧归浣女，莲动下渔舟。\n随意春芳歇，王孙自可留。',
+       notes:{释义:'空旷的群山沐浴了一场新雨，夜晚降临使人感到已是初秋。皎皎明月从松间洒下清光，清清泉水在山石上淙淙淌流。竹林喧响知是洗衣姑娘归来，莲叶轻摇想是上游荡下轻舟。春天的芳华不妨随它消歇，秋天的山中王孙自可以久留。',赏析:'这首诗是王维山水诗的代表作，"明月松间照，清泉石上流"一联被誉为"诗中有画"的典范，展现了空灵澄澈的山林秋景。'}},
+      {title:'送元二使安西',text:'渭城朝雨浥轻尘，客舍青青柳色新。\n劝君更尽一杯酒，西出阳关无故人。',
+       notes:{释义:'清晨的微雨湿润了渭城地面的灰尘，客舍旁的柳树被雨水洗得更加青翠。请你再饮一杯离别的酒吧，因为西出阳关之后就再没有老朋友了。',赏析:'此诗后被谱入乐府，成为送别名曲"阳关三叠"。末句"西出阳关无故人"含蓄深沉，道尽离愁别绪。'}}
+    ],
+    bio:'王维（701年—761年），字摩诘，号摩诘居士。河东蒲州人。唐朝著名诗人、画家，被誉为"诗佛"。苏轼评价其"诗中有画，画中有诗"。',
+    trajectory:[
+      {year:'701年',text:'出生于河东蒲州（今山西运城）'},
+      {year:'721年',text:'中进士，任太乐丞'},
+      {year:'737年',text:'出使凉州，写下边塞诗'},
+      {year:'750年',text:'在辋川建别墅，半官半隐'},
+      {year:'761年',text:'病逝于辋川别业'},
+    ]
+  },
+  {
+    id:'libai', name:'李白', years:'701—762', dynasty:'tang',
+    birth:701, zi:'字太白，号青莲居士', school:'浪漫主义',
+    works:[
+      {title:'静夜思',text:'床前明月光，疑是地上霜。\n举头望明月，低头思故乡。',
+       notes:{释义:'明亮的月光洒在床前的窗户纸上，好像地上泛起了一层白霜。抬起头来观看那天窗外的一轮明月，低下头不禁思念起远方的故乡。',赏析:'这首诗写游子思乡之情，语言质朴自然，意境深远，是中国流传最广的古诗之一。'}},
+      {title:'将进酒',text:'君不见黄河之水天上来，奔流到海不复回。\n君不见高堂明镜悲白发，朝如青丝暮成雪。\n人生得意须尽欢，莫使金樽空对月。\n天生我材必有用，千金散尽还复来。',
+       notes:{释义:'你难道看不见那黄河之水从天上奔腾而来，波涛翻滚直奔东海再也不会回来。你难道看不见那年迈的父母对着明镜悲叹那一头白发，早晨还是满头青丝到了傍晚却变得如雪一般。人生得意之时就应当尽情欢乐，不要让这金杯无酒空对明月。上天造就了我的才干就必然是有用处的，千两黄金花完了也能够再次获得。',赏析:'此诗是李白豪放风格的代表作，气势磅礴，感情奔放。"天生我材必有用"成为激励后人的千古名句。'}},
+      {title:'望庐山瀑布',text:'日照香炉生紫烟，遥看瀑布挂前川。\n飞流直下三千尺，疑是银河落九天。',
+       notes:{释义:'香炉峰在阳光的照射下生起紫色烟霞，远远望去那瀑布如白色绢绸悬挂在山前。高崖上飞腾直落的瀑布好像有几千尺，让人恍惚以为是银河从天上泻落到人间。',赏析:'以夸张手法写庐山瀑布的壮美，"飞流直下三千尺，疑是银河落九天"气势恢宏，想象奇特。'}}
+    ],
+    bio:'李白（701年—762年），字太白，号青莲居士，又号"谪仙人"。唐代伟大的浪漫主义诗人，被后人誉为"诗仙"。与杜甫合称"李杜"。',
+    trajectory:[
+      {year:'701年',text:'出生于碎叶城（今吉尔吉斯斯坦），幼年迁居四川'},
+      {year:'725年',text:'仗剑去国，辞亲远游'},
+      {year:'742年',text:'奉诏入京，供奉翰林'},
+      {year:'744年',text:'赐金放还，游历天下'},
+      {year:'762年',text:'病逝于当涂（今安徽马鞍山）'},
+    ]
+  },
+  {
+    id:'dufu', name:'杜甫', years:'712—770', dynasty:'tang',
+    birth:712, zi:'字子美，号少陵野老', school:'现实主义',
+    works:[
+      {title:'春望',text:'国破山河在，城春草木深。\n感时花溅泪，恨别鸟惊心。\n烽火连三月，家书抵万金。\n白头搔更短，浑欲不胜簪。',
+       notes:{释义:'国家沦陷只有山河依旧，春日的城区里杂草丛生。感伤国事看到花开反而落泪，怨恨别离听到鸟鸣反而惊心。战火连绵几个月不断，一封家书抵得上万两黄金。白发越搔越少，简直要插不住簪子了。',赏析:'此诗作于安史之乱中，杜甫困居长安时。"感时花溅泪，恨别鸟惊心"以乐景写哀情，深刻表达了忧国忧民之情。'}},
+      {title:'登高',text:'风急天高猿啸哀，渚清沙白鸟飞回。\n无边落木萧萧下，不尽长江滚滚来。\n万里悲秋常作客，百年多病独登台。\n艰难苦恨繁霜鬓，潦倒新停浊酒杯。',
+       notes:{释义:'风急天高猿猴啼叫显得十分悲哀，水清沙白的河滩上有鸟儿在盘旋。无边无际的树木萧萧地飘下落叶，望不到头的长江水滚滚涌来。悲对秋景感慨万里漂泊常年为客，一生当中疾病缠身今日独上高台。历尽了艰难苦恨白发长满了双鬓，衰颓满心偏又暂停了浇愁的酒杯。',赏析:'被后人誉为"古今七律第一"，"无边落木萧萧下，不尽长江滚滚来"气象雄浑，被誉为千古名句。'}}
+    ],
+    bio:'杜甫（712年—770年），字子美，自号少陵野老。唐代伟大的现实主义诗人，被后人尊为"诗圣"。其诗被称为"诗史"。',
+    trajectory:[
+      {year:'712年',text:'出生于河南巩县（今巩义市）'},
+      {year:'746年',text:'赴长安应试不第，困居十年'},
+      {year:'755年',text:'安史之乱爆发，流离失所'},
+      {year:'759年',text:'弃官入蜀，定居成都草堂'},
+      {year:'770年',text:'病逝于湘江舟中'},
+    ]
+  },
+  {
+    id:'baijuyi', name:'白居易', years:'772—846', dynasty:'tang',
+    birth:772, zi:'字乐天，号香山居士', school:'新乐府运动',
+    works:[
+      {title:'赋得古原草送别',text:'离离原上草，一岁一枯荣。\n野火烧不尽，春风吹又生。\n远芳侵古道，晴翠接荒城。\n又送王孙去，萋萋满别情。',
+       notes:{释义:'原野上的青草茂盛，一年一度枯萎又繁荣。野火也不能将它烧尽，春风一吹又蓬勃生长。远处的芳草蔓延到古道上，阳光下的翠绿连接到荒城。又一次送走远行的朋友，茂盛的青草似乎也充满离别之情。',赏析:'白居易十六岁时所作，"野火烧不尽，春风吹又生"成为咏草的千古绝唱，展现了生命的顽强力量。'}},
+      {title:'长恨歌（节选）',text:'汉皇重色思倾国，御宇多年求不得。\n杨家有女初长成，养在深闺人未识。\n天生丽质难自弃，一朝选在君王侧。',
+       notes:{释义:'唐明皇偏好美色，当上皇帝后多年来一直在寻找美女。杨家有个女儿刚刚长大，十分娇艳，养在深闺中，外人不知她美丽绝伦。天生丽质使她难以埋没，终于被选到皇帝身边。',赏析:'《长恨歌》是白居易最著名的长篇叙事诗，以唐玄宗与杨贵妃的爱情悲剧为题材，融叙事与抒情于一体。'}}
+    ],
+    bio:'白居易（772年—846年），字乐天，号香山居士。唐代伟大的现实主义诗人，有"诗魔"和"诗王"之称。倡导新乐府运动，主张"文章合为时而著，歌诗合为事而作"。',
+    trajectory:[
+      {year:'772年',text:'出生于河南新郑'},
+      {year:'800年',text:'中进士第'},
+      {year:'807年',text:'任左拾遗，直言敢谏'},
+      {year:'815年',text:'贬江州司马，写下《琵琶行》'},
+      {year:'846年',text:'病逝于洛阳'},
+    ]
+  },
+  {
+    id:'lisu', name:'李商隐', years:'813—858', dynasty:'tang',
+    birth:813, zi:'字义山，号玉溪生', school:'晚唐诗派',
+    works:[
+      {title:'锦瑟',text:'锦瑟无端五十弦，一弦一柱思华年。\n庄生晓梦迷蝴蝶，望帝春心托杜鹃。\n沧海月明珠有泪，蓝田日暖玉生烟。\n此情可待成追忆？只是当时已惘然。',
+       notes:{释义:'锦瑟啊，你为什么无缘无故有五十根弦？每一根弦、每一个柱都让我追忆那美好的年华。庄周在梦中化为蝴蝶分不清真假，望帝把春心寄托给悲啼的杜鹃。沧海明月高照，鲛人泪化成珠；蓝田暖阳和美玉生出轻烟。这些感情哪等到今天才来追忆？在当时就已经感到怅惘了。',赏析:'《锦瑟》被誉为中国最难解的诗之一，千百年来众说纷纭。全诗用典精妙，意象朦胧，表达了深沉的人生感慨。'}}
+    ],
+    bio:'李商隐（813年—858年），字义山，号玉溪生。晚唐著名诗人，与杜牧合称"小李杜"。其诗构思新奇，风格秾丽，尤其擅长七律。',
+    trajectory:[
+      {year:'813年',text:'出生于河南荥阳'},
+      {year:'837年',text:'中进士第'},
+      {year:'842年',text:'入秘书省任职'},
+      {year:'858年',text:'病逝于郑州'},
+    ]
+  },
+  {
+    id:'sushi', name:'苏轼', years:'1037—1101', dynasty:'song',
+    birth:1037, zi:'字子瞻，号东坡居士', school:'豪放派',
+    works:[
+      {title:'水调歌头·明月几时有',text:'明月几时有？把酒问青天。\n不知天上宫阙，今夕是何年。\n我欲乘风归去，又恐琼楼玉宇，高处不胜寒。\n起舞弄清影，何似在人间。',
+       notes:{释义:'明月是从什么时候才有的？我端起酒杯遥问苍天。不知道在天上的宫殿，今天晚上是何年何月。我想要乘御清风回到天上，又恐怕在美玉砌成的楼宇，受不住高耸九天的寒冷。翩翩起舞玩赏着月下清影，哪像是在人间。',赏析:'这首词是苏轼最著名的作品之一，以月起兴，抒发了对亲人的思念和对人生的感悟，境界开阔，感情真挚。'}},
+      {title:'念奴娇·赤壁怀古',text:'大江东去，浪淘尽，千古风流人物。\n故垒西边，人道是，三国周郎赤壁。\n乱石穿空，惊涛拍岸，卷起千堆雪。\n江山如画，一时多少豪杰。',
+       notes:{释义:'大江之水滚滚不断向东流去，淘尽了那些千古风流人物。在那旧营垒的西边，人们说那就是三国周瑜鏖战的赤壁。陡峭的石壁直耸云天，如雷的惊涛拍击着江岸，激起的浪花好似卷起千万堆白雪。雄壮的江山奇丽如图画，一时间涌现出多少英雄豪杰。',赏析:'被誉为"千古绝唱"，以雄浑壮阔的笔调追忆赤壁之战，抒发了对英雄人物的仰慕和对人生的感慨。'}}
+    ],
+    bio:'苏轼（1037年—1101年），字子瞻，号东坡居士。北宋著名文学家、书法家、画家，与父苏洵、弟苏辙合称"三苏"。词开豪放一派，与辛弃疾并称"苏辛"。',
+    trajectory:[
+      {year:'1037年',text:'出生于眉州眉山（今四川眉山）'},
+      {year:'1057年',text:'与弟苏辙同榜进士及第'},
+      {year:'1079年',text:'乌台诗案，贬黄州'},
+      {year:'1094年',text:'再度被贬至惠州、儋州'},
+      {year:'1101年',text:'病逝于常州'},
+    ]
+  },
+  {
+    id:'liqingzhao', name:'李清照', years:'1084—1155', dynasty:'song',
+    birth:1084, zi:'号易安居士', school:'婉约派',
+    works:[
+      {title:'如梦令',text:'昨夜雨疏风骤，浓睡不消残酒。\n试问卷帘人，却道海棠依旧。\n知否，知否？应是绿肥红瘦。',
+       notes:{释义:'昨天夜里雨虽然下得稀疏，但风却刮得很急，沉沉睡了一觉仍有残存的酒意。试着问卷帘的侍女，她却说海棠花还是老样子。知道吗？知道吗？应该是绿叶繁茂、红花凋零了。',赏析:'此词借宿酒醒后询问花事的描写，曲折表达惜花之情。"绿肥红瘦"四字以形容词代替名词，新颖别致，成为千古名句。'}},
+      {title:'声声慢',text:'寻寻觅觅，冷冷清清，凄凄惨惨戚戚。\n乍暖还寒时候，最难将息。\n三杯两盏淡酒，怎敌他、晚来风急！\n雁过也，正伤心，却是旧时相识。',
+       notes:{释义:'苦苦地寻寻觅觅，却只见冷冷清清，怎不让人凄惨悲戚。乍暖还寒的时节，最难调养休息。喝三杯两杯淡酒，怎么能抵得住这傍晚的寒风！一行大雁从眼前飞过，更让人伤心，因为都是旧日的相识。',赏析:'开篇连用十四个叠字，堪称创举，层层深入，奠定了全词凄惨哀婉的基调，是李清照晚年词作的巅峰。'}}
+    ],
+    bio:'李清照（1084年—约1155年），号易安居士，济南人。宋代女词人，婉约词派代表，有"千古第一才女"之称。',
+    trajectory:[
+      {year:'1084年',text:'出生于济南，自幼聪慧好学'},
+      {year:'1101年',text:'与赵明诚结婚，共同致力于金石书画收藏'},
+      {year:'1127年',text:'靖康之变，南渡流离'},
+      {year:'1129年',text:'赵明诚病逝，李清照孤苦飘零'},
+      {year:'约1155年',text:'在凄凉中病逝'},
+    ]
+  },
+  {
+    id:'xinqiji', name:'辛弃疾', years:'1140—1207', dynasty:'song',
+    birth:1140, zi:'字幼安，号稼轩', school:'豪放派',
+    works:[
+      {title:'破阵子·为陈同甫赋壮词以寄之',text:'醉里挑灯看剑，梦回吹角连营。\n八百里分麾下炙，五十弦翻塞外声。\n沙场秋点兵。\n马作的卢飞快，弓如霹雳弦惊。\n了却君王天下事，赢得生前身后名。\n可怜白发生！',
+       notes:{释义:'醉梦里挑亮油灯观看宝剑，梦中回到了当年的各个营垒，接连响起号角声。把烤牛肉分给部下，乐队演奏北疆歌曲。这是秋天在战场上阅兵。战马像的卢马一样跑得飞快，弓箭像惊雷一样震耳离弦。我一心想替君主完成收复失地的大业，取得世代相传的美名。只可惜已成了白发人！',赏析:'此词以梦境写壮志，全篇豪放激昂，结尾"可怜白发生"一句陡转，道尽英雄迟暮的悲慨。'}}
+    ],
+    bio:'辛弃疾（1140年—1207年），字幼安，号稼轩。南宋豪放派词人、将领，有"词中之龙"之称。与苏轼合称"苏辛"。',
+    trajectory:[
+      {year:'1140年',text:'出生于济南（时金国统治区）'},
+      {year:'1161年',text:'率众起义抗金，后南归宋朝'},
+      {year:'1181年',text:'被弹劾罢官，闲居上饶'},
+      {year:'1207年',text:'病逝，临终大呼"杀贼！杀贼！"'},
+    ]
+  },
+  {
+    id:'nalanxingde', name:'纳兰性德', years:'1655—1685', dynasty:'qing',
+    birth:1655, zi:'字容若，号楞伽山人', school:'婉约词派',
+    works:[
+      {title:'长相思',text:'山一程，水一程，\n身向榆关那畔行，夜深千帐灯。\n风一更，雪一更，\n聒碎乡心梦不成，故园无此声。',
+       notes:{释义:'跋山涉水走过一程又一程，向着山海关那边行进，夜深时千百顶帐篷中灯火通明。一夜的风雪交替不停，嘈杂的风雪声搅碎了思乡的梦，家乡可没有这样的声音。',赏析:'这首词写行军途中对故乡的思念，语言朴素而感情真挚。"夜深千帐灯"一句气象宏大，王国维赞其"千古壮观"。'}}
+    ],
+    bio:'纳兰性德（1655年—1685年），字容若，满洲正黄旗人。清代最著名词人之一，与朱彝尊、陈维崧并称"清词三大家"。王国维赞其"北宋以来，一人而已"。',
+    trajectory:[
+      {year:'1655年',text:'出生于北京，为权臣明珠之子'},
+      {year:'1676年',text:'中进士，授三等侍卫'},
+      {year:'1678年',text:'妻子卢氏难产去世，纳兰悲痛欲绝'},
+      {year:'1685年',text:'病逝于北京，年仅三十'},
+    ]
+  },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentPoet = null;
+let currentPoem = null;
+let studyList = JSON.parse(localStorage.getItem('poetry_study_list') || '[]');
+let viewStack = [];
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  createHeroParticles();
+  renderTimeline();
+  updateStudyBadge();
+}
+
+function createHeroParticles() {
+  const container = document.getElementById('heroParticles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'hero-particle';
+    const size = 2 + Math.random() * 4;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      animation-delay:${Math.random()*8}s;
+      animation-duration:${6+Math.random()*6}s;
+    `;
+    container.appendChild(p);
+  }
+}
+
+/* ============================================================
+   TIMELINE RENDERING
+   ============================================================ */
+function renderTimeline() {
+  const container = document.getElementById('timelineContainer');
+  // Keep axis
+  const axis = container.querySelector('.timeline-axis');
+  container.innerHTML = '';
+  container.appendChild(axis);
+
+  // Timeline range
+  const yearStart = -1100, yearEnd = 2000;
+  const totalYears = yearEnd - yearStart;
+  const pxPerYear = 2.2; // pixels per year
+  const totalHeight = totalYears * pxPerYear;
+  container.style.height = totalHeight + 'px';
+
+  function yearToY(year) {
+    return (year - yearStart) * pxPerYear;
+  }
+
+  // Dynasty grid lines and labels
+  DYNASTIES.forEach(d => {
+    const midYear = Math.round((d.start + d.end) / 2);
+    const y = yearToY(midYear);
+
+    // Grid line spanning full width
+    const line = document.createElement('div');
+    line.className = 'dynasty-line';
+    line.id = 'dline-' + d.id;
+    line.style.top = y + 'px';
+    container.appendChild(line);
+
+    // Dynasty label centered on axis
+    const label = document.createElement('div');
+    label.className = 'dynasty-label';
+    label.id = 'dlabel-' + d.id;
+    label.style.top = (y - 18) + 'px';
+    label.innerHTML = `${d.name}<span class="dynasty-years">${formatYear(d.start)} — ${formatYear(d.end)}</span>`;
+    label.addEventListener('mouseenter', () => highlightDynasty(d.id, true));
+    label.addEventListener('mouseleave', () => highlightDynasty(d.id, false));
+    container.appendChild(label);
+  });
+
+  // Poet cards alternating left/right
+  const sortedPoets = [...POETS].sort((a, b) => a.birth - b.birth);
+  let side = 'left';
+  let lastY = -100;
+
+  sortedPoets.forEach((poet, i) => {
+    const y = yearToY(poet.birth);
+    // Adjust if cards would overlap
+    let adjustedY = y;
+    if (adjustedY - lastY < 180) adjustedY = lastY + 180;
+
+    // Dot on axis
+    const dot = document.createElement('div');
+    dot.className = 'poet-dot';
+    dot.id = 'dot-' + poet.id;
+    dot.dataset.dynasty = poet.dynasty;
+    dot.style.top = (adjustedY + 40) + 'px';
+    container.appendChild(dot);
+
+    // Card
+    const card = document.createElement('div');
+    card.className = `poet-card ${side}`;
+    card.id = 'card-' + poet.id;
+    card.dataset.dynasty = poet.dynasty;
+    card.style.top = adjustedY + 'px';
+    card.innerHTML = `
+      <div class="pc-name">${poet.name}</div>
+      <div class="pc-years">${poet.years}</div>
+      <div class="pc-tags">
+        <span class="pc-tag">${DYNASTIES.find(d=>d.id===poet.dynasty).name}</span>
+        <span class="pc-tag school">${poet.school}</span>
+      </div>
+      <div class="pc-works">${poet.works.slice(0,3).map(w=>`<span onclick="event.stopPropagation();openPoem('${poet.id}','${w.title}')">${w.title}</span>`).join('')}</div>
+    `;
+    card.addEventListener('click', () => openPoet(poet.id));
+    card.addEventListener('mouseenter', () => highlightDynasty(poet.dynasty, true));
+    card.addEventListener('mouseleave', () => highlightDynasty(poet.dynasty, false));
+    container.appendChild(card);
+
+    lastY = adjustedY;
+    side = side === 'left' ? 'right' : 'left';
+  });
+}
+
+function highlightDynasty(dynastyId, on) {
+  const line = document.getElementById('dline-' + dynastyId);
+  const label = document.getElementById('dlabel-' + dynastyId);
+  if (line) line.classList.toggle('highlight', on);
+  if (label) label.classList.toggle('highlight', on);
+
+  document.querySelectorAll('.poet-card').forEach(card => {
+    if (card.dataset.dynasty === dynastyId) {
+      card.classList.toggle('highlight', on);
+    }
+  });
+  document.querySelectorAll('.poet-dot').forEach(dot => {
+    if (dot.dataset.dynasty === dynastyId) {
+      dot.classList.toggle('highlight', on);
+    }
+  });
+}
+
+function formatYear(y) {
+  if (y < 0) return '前' + Math.abs(y) + '年';
+  return y + '年';
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function onSearch(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) { closeSearch(); return; }
+  const overlay = document.getElementById('searchOverlay');
+  const results = document.getElementById('searchResults');
+
+  // Search poets and poems
+  let html = '';
+  POETS.forEach(poet => {
+    const dynastyName = DYNASTIES.find(d=>d.id===poet.dynasty).name;
+    const matchPoet = poet.name.includes(q) || poet.zi.includes(q) || poet.school.includes(q) || dynastyName.includes(q);
+    const matchWorks = poet.works.filter(w => w.title.includes(q) || w.text.includes(q));
+
+    if (matchPoet) {
+      html += `<div class="search-result-item" onclick="closeSearch();openPoet('${poet.id}')">
+        <span class="sr-emoji">👤</span>
+        <div><div class="sr-name">${poet.name}</div><div class="sr-meta">${dynastyName} · ${poet.school} · ${poet.years}</div></div>
+      </div>`;
+    }
+    matchWorks.forEach(w => {
+      html += `<div class="search-result-item" onclick="closeSearch();openPoem('${poet.id}','${w.title}')">
+        <span class="sr-emoji">📜</span>
+        <div><div class="sr-name">${w.title}</div><div class="sr-meta">${poet.name} · ${dynastyName}</div></div>
+      </div>`;
+    });
+  });
+
+  if (!html) html = '<div style="padding:30px;text-align:center;color:var(--ink3)">未找到相关结果</div>';
+  results.innerHTML = html;
+  overlay.classList.add('show');
+}
+function closeSearch() {
+  document.getElementById('searchOverlay').classList.remove('show');
+}
+
+/* ============================================================
+   VIEW NAVIGATION
+   ============================================================ */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goBack() {
+  viewStack.pop();
+  const prev = viewStack[viewStack.length - 1] || 'mainView';
+  showView(prev);
+}
+function goBackToPoet() {
+  viewStack.pop();
+  showView('detailView');
+}
+
+/* ============================================================
+   POET DETAIL
+   ============================================================ */
+function openPoet(id) {
+  const poet = POETS.find(p => p.id === id);
+  if (!poet) return;
+  currentPoet = poet;
+  viewStack = ['mainView', 'detailView'];
+
+  const dynasty = DYNASTIES.find(d => d.id === poet.dynasty);
+  document.getElementById('detailName').textContent = poet.name;
+  document.getElementById('detailYears').textContent = poet.years;
+  document.getElementById('detailTags').innerHTML = `
+    <span class="detail-tag dynasty">${dynasty.name}</span>
+    <span class="detail-tag">${poet.zi}</span>
+    <span class="detail-tag school">${poet.school}</span>
+  `;
+  document.getElementById('detailBio').textContent = poet.bio;
+
+  // Trajectory
+  document.getElementById('detailTrajectory').innerHTML = poet.trajectory.map(t => `
+    <div class="trajectory-item">
+      <div class="traj-year">${t.year}</div>
+      <div class="traj-text">${t.text}</div>
+    </div>
+  `).join('');
+
+  // Poems
+  document.getElementById('detailPoems').innerHTML = poet.works.map(w => {
+    const inList = studyList.some(s => s.poetId === poet.id && s.title === w.title);
+    return `<div class="poem-card" onclick="openPoem('${poet.id}','${w.title}')">
+      <div class="poem-title">${w.title}</div>
+      <div class="poem-preview">${w.text.split('\n').slice(0,2).join(' / ')}…</div>
+      <div class="poem-actions">
+        <button class="poem-action-btn ${inList?'added':''}" onclick="event.stopPropagation();quickToggleStudy('${poet.id}','${w.title}',this)">
+          ${inList?'✓ 已收藏':'+ 收藏'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  showView('detailView');
+}
+
+/* ============================================================
+   POEM LEARNING
+   ============================================================ */
+function openPoem(poetId, title) {
+  const poet = POETS.find(p => p.id === poetId);
+  if (!poet) return;
+  const poem = poet.works.find(w => w.title === title);
+  if (!poem) return;
+  currentPoet = poet;
+  currentPoem = poem;
+
+  if (!viewStack.includes('learnView')) {
+    viewStack.push('learnView');
+  }
+
+  document.getElementById('learnTitle').textContent = poem.title;
+  const dynasty = DYNASTIES.find(d => d.id === poet.dynasty);
+  document.getElementById('learnPoet').textContent = `${poet.name} · ${dynasty.name}`;
+
+  // Poem text
+  document.getElementById('learnPoemText').innerHTML = poem.text.split('\n').map(line => `<p>${line}</p>`).join('');
+
+  // Notes
+  let notesHtml = '';
+  if (poem.notes) {
+    if (poem.notes.释义) notesHtml += `<dt>释义</dt><dd>${poem.notes.释义}</dd>`;
+    if (poem.notes.赏析) notesHtml += `<dt>赏析</dt><dd>${poem.notes.赏析}</dd>`;
+  }
+  document.getElementById('learnNotes').innerHTML = notesHtml;
+
+  // Study button state
+  updateStudyBtn();
+  showView('learnView');
+}
+
+function readPoem() {
+  if (!currentPoem) return;
+  // Use Web Speech API for reading
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(currentPoem.text.replace(/\n/g, '，'));
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    // Try to find a Chinese voice
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoice = voices.find(v => v.lang.startsWith('zh'));
+    if (zhVoice) utterance.voice = zhVoice;
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert('您的浏览器不支持语音朗读功能');
+  }
+}
+
+/* ============================================================
+   STUDY LIST
+   ============================================================ */
+function toggleStudy() {
+  if (!currentPoet || !currentPoem) return;
+  const idx = studyList.findIndex(s => s.poetId === currentPoet.id && s.title === currentPoem.title);
+  if (idx >= 0) {
+    studyList.splice(idx, 1);
+  } else {
+    studyList.push({
+      poetId: currentPoet.id,
+      poetName: currentPoet.name,
+      title: currentPoem.title,
+      dynasty: DYNASTIES.find(d => d.id === currentPoet.dynasty).name,
+      addedAt: Date.now()
+    });
+  }
+  saveStudyList();
+  updateStudyBtn();
+  updateStudyBadge();
+}
+
+function quickToggleStudy(poetId, title, btn) {
+  const poet = POETS.find(p => p.id === poetId);
+  const idx = studyList.findIndex(s => s.poetId === poetId && s.title === title);
+  if (idx >= 0) {
+    studyList.splice(idx, 1);
+    btn.classList.remove('added');
+    btn.textContent = '+ 收藏';
+  } else {
+    studyList.push({
+      poetId, poetName: poet.name, title,
+      dynasty: DYNASTIES.find(d => d.id === poet.dynasty).name,
+      addedAt: Date.now()
+    });
+    btn.classList.add('added');
+    btn.textContent = '✓ 已收藏';
+  }
+  saveStudyList();
+  updateStudyBadge();
+}
+
+function updateStudyBtn() {
+  if (!currentPoet || !currentPoem) return;
+  const btn = document.getElementById('addStudyBtn');
+  const inList = studyList.some(s => s.poetId === currentPoet.id && s.title === currentPoem.title);
+  btn.className = 'toolbar-btn' + (inList ? ' added' : '');
+  btn.textContent = inList ? '✓ 已在学习清单' : '📚 加入学习清单';
+}
+
+function saveStudyList() {
+  localStorage.setItem('poetry_study_list', JSON.stringify(studyList));
+}
+
+function updateStudyBadge() {
+  document.getElementById('studyBadge').textContent = studyList.length;
+}
+
+function toggleStudyPanel() {
+  const panel = document.getElementById('studyPanel');
+  panel.classList.toggle('show');
+  if (panel.classList.contains('show')) renderStudyPanel();
+}
+
+function renderStudyPanel() {
+  const content = document.getElementById('studyListContent');
+  if (studyList.length === 0) {
+    content.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--ink3);font-size:13px">还没有收藏的古诗<br>浏览诗人详情时点击"收藏"即可添加</div>';
+    return;
+  }
+  content.innerHTML = studyList.map((item, i) => `
+    <div class="study-item" onclick="openPoem('${item.poetId}','${item.title}')">
+      <div class="study-item-info">
+        <div class="si-title">${item.title}</div>
+        <div class="si-poet">${item.poetName} · ${item.dynasty}</div>
+      </div>
+      <button class="study-item-remove" onclick="event.stopPropagation();removeStudyItem(${i})" title="移除">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeStudyItem(index) {
+  studyList.splice(index, 1);
+  saveStudyList();
+  updateStudyBadge();
+  renderStudyPanel();
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+init();
+// Ensure speech synthesis voices are loaded
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+</script>
+</body>
+</html>
